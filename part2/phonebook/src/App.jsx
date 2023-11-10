@@ -40,11 +40,25 @@ const Person = ({ person, deletePerson }) => {
 	)
 }
 
+const Notification = ({ message, type }) => {
+
+	if (message === null) {
+	  return null
+	}
+
+	return (
+	  <div className={type}>
+		{message}
+	  </div>
+	)
+}
+
 const App = () => {
 
 	const [persons, setPersons] = useState([])
 	const [newPerson, setNewPerson] = useState({name: '', number: ''})
 	const [filter, setFilter] = useState('');
+	const [notification, setNotification] = useState({message: null, type: ''})
 
 	const hook = () => {
 		personService
@@ -69,7 +83,22 @@ const App = () => {
 
 				personService
 					.update(person.id, changedPerson)
-					.then(returnedPerson => setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson)))
+					.then(returnedPerson => {
+
+						setNotification({
+							message: `Changed number for ${returnedPerson.name}`,
+							type: 'success'
+						})
+
+						setTimeout(() => {
+							setNotification({
+								message: null,
+								type: ''
+							})
+						}, 5000)
+
+						setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
+					})
 			}
 
 			return
@@ -84,6 +113,19 @@ const App = () => {
 		personService
 			.create(personObject)
 			.then(returnedPerson => {
+
+				setNotification({
+					message: `Added ${returnedPerson.name}`,
+					type: 'success'
+				})
+
+				setTimeout(() => {
+					setNotification({
+						message: null,
+						type: ''
+					})
+				}, 5000)
+
 				setPersons(persons.concat(returnedPerson))
 				setNewPerson({name: '', number: ''})
 			})
@@ -109,9 +151,17 @@ const App = () => {
 				.then(resp => setPersons(persons.filter(p => p.id !== person.id)))
 				.catch(err => {
 
-					alert(
-						`the person '${person.name}' was already deleted from server`
-					)
+					setNotification({
+						message: `Information of ${person.name} has already been removed from server`,
+						type: 'error'
+					})
+
+					setTimeout(() => {
+						setNotification({
+							message: null,
+							type: ''
+						})
+					}, 5000)
 
 					setPersons(persons.filter(p => p.id !== person.id))
 				})
@@ -124,6 +174,7 @@ const App = () => {
 	<div>
 
 		<h2>Phonebook</h2>
+		<Notification message={notification.message} type={notification.type} />
 		<Filter filter={filter} onChangeFilter={() => {setFilter(event.target.value)}} />
 
 		<h3>add a new</h3>
