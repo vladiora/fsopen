@@ -74,6 +74,16 @@ const App = () => {
 
 		event.preventDefault()
 
+		if (!newPerson.name || !newPerson.number) {
+
+			setNotification({
+				message: `Name or number cannot be empty`,
+				type: 'error'
+			})
+
+			return
+		}
+
 		if (persons.some(person => person.name === newPerson.name)) {
 
 			if (window.confirm(`${newPerson.name} is already added to phonebook, replace the old number with a new one?`)) {
@@ -98,6 +108,7 @@ const App = () => {
 						}, 5000)
 
 						setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
+						setNewPerson({name: '', number: ''})
 					})
 			}
 
@@ -106,8 +117,7 @@ const App = () => {
 
 		const personObject = {
 			name: newPerson.name,
-			number: newPerson.number,
-			id: persons.length + 1
+			number: newPerson.number
 		}
 
 		personService
@@ -128,6 +138,13 @@ const App = () => {
 
 				setPersons(persons.concat(returnedPerson))
 				setNewPerson({name: '', number: ''})
+			})
+			.catch(() => {
+
+				setNotification({
+					message: `Invalid input for name or number.`,
+					type: 'error'
+				})
 			})
 	}
 
