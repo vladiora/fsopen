@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs/ HTTP/1.1
+content-type: application/json
+
+{
+	"title": "The Pragmatic Engineer",
+	"author": "Gergely Orosz",
+	"url": "https://newsletter.pragmaticengineer.com/",
+	"likes": 10
+}
