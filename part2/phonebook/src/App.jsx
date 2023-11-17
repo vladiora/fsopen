@@ -43,13 +43,13 @@ const Person = ({ person, deletePerson }) => {
 const Notification = ({ message, type }) => {
 
 	if (message === null) {
-	  return null
+		return null
 	}
 
 	return (
-	  <div className={type}>
-		{message}
-	  </div>
+		<div className={type}>
+			{message}
+		</div>
 	)
 }
 
@@ -73,16 +73,6 @@ const App = () => {
 	const addPerson = (event) => {
 
 		event.preventDefault()
-
-		if (!newPerson.name || !newPerson.number) {
-
-			setNotification({
-				message: `Name or number cannot be empty`,
-				type: 'error'
-			})
-
-			return
-		}
 
 		if (persons.some(person => person.name === newPerson.name)) {
 
@@ -139,10 +129,10 @@ const App = () => {
 				setPersons(persons.concat(returnedPerson))
 				setNewPerson({name: '', number: ''})
 			})
-			.catch(() => {
+			.catch(error => {
 
 				setNotification({
-					message: `Invalid input for name or number.`,
+					message: error.response.data.error,
 					type: 'error'
 				})
 			})
@@ -192,7 +182,7 @@ const App = () => {
 
 		<h2>Phonebook</h2>
 		<Notification message={notification.message} type={notification.type} />
-		<Filter filter={filter} onChangeFilter={() => {setFilter(event.target.value)}} />
+		<Filter filter={filter} onChangeFilter={(event) => {setFilter(event.target.value)}} />
 
 		<h3>add a new</h3>
 		<PersonForm addPerson={addPerson} personName={newPerson.name} onChangeName={onChangeName} personNumber={newPerson.number} onChangeNumber={onChangeNumber} />
