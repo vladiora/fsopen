@@ -12,8 +12,8 @@ describe('ensure invalid users are not created', () => {
 	beforeEach(async () => {
 	  await User.deleteMany({})
 
-	  const passwordHash = await bcrypt.hash('secret', 10)
-	  const user = new User({ username: 'root', passwordHash })
+	  const passwordHash = await bcrypt.hash('newPass123', 10)
+	  const user = new User({ username: 'hellas', name: 'Arto Hellas', passwordHash })
 
 	  await user.save()
 	})
@@ -68,7 +68,7 @@ describe('ensure invalid users are not created', () => {
 		const usersAtStart = await helper.usersInDb()
 
 		const newUser = {
-			username: 'root',
+			username: 'hellas',
 			name: 'Matti Luukkainen',
 			password: 'salainen'
 		}
@@ -79,7 +79,7 @@ describe('ensure invalid users are not created', () => {
 			.expect(400)
 			.expect('Content-Type', /application\/json/)
 
-		expect(result.body.error).toContain('User validation failed: username: Error, expected `username` to be unique. Value: `root`')
+		expect(result.body.error).toContain('User validation failed: username: Error, expected `username` to be unique. Value: `hellas`')
 
 		const usersAtEnd = await helper.usersInDb()
 		expect(usersAtEnd).toHaveLength(usersAtStart.length)
