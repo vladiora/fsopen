@@ -1,18 +1,6 @@
-const jwt = require('jsonwebtoken')
 const blogsRouter = require('express').Router()
+const middleware = require('../utils/middleware')
 const Blog = require('../models/blog')
-
-const User = require('../models/user')
-
-const getTokenFrom = request => {
-
-	const authorization = request.get('authorization')
-
-	if (authorization && authorization.startsWith('Bearer '))
-	  	return authorization.replace('Bearer ', '')
-
-	return null
-}
 
 blogsRouter.get('/', async (request, response) => {
 
@@ -20,22 +8,27 @@ blogsRouter.get('/', async (request, response) => {
 	response.json(blogs)
 })
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.get('/:id', async (request, response) => {
+
+	const blog = await Blog.findById(request.params.id).populate('user', { username: 1, name: 1 })
+
+	if (blog)
+		response.json(blog)
+	else
+		response.status(404).end()
+})
+
+blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
 
 	const body = request.body
-
-	const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
-	if (!decodedToken.id)
-	  	return response.status(401).json({ error: 'token invalid' })
-
-	const user = await User.findById(decodedToken.id)
+	const user = request.user
 
 	const blog = new Blog({
 		title: body.title,
 		author: body.author,
 		url: body.url,
 		user: user._id,
-		likes: body.likes
+		likes: body.likes ?? 0
 	})
 
 	const returnedObject = await blog.save()
@@ -44,6 +37,23 @@ blogsRouter.post('/', async (request, response) => {
 	await user.save()
 
 	response.status(201).json(returnedObject)
+})
+
+blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
+
+	const user = request.user
+	const blog = await Blog.findById(request.params.id)
+
+	if (blog.user.toString() !== user._id.toString())
+		return response.status(400).json({ error: 'Blog can be deleted only by the user who added the blog.' })
+
+	await Blog.findByIdAndDelete(request.params.id)
+
+	const index = user.blogs.indexOf(request.params.id);
+	user.blogs.splice(index, 1)
+	await user.save()
+
+  	response.status(204).end()
 })
 
 module.exports = blogsRouter

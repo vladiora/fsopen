@@ -1,21 +1,14 @@
 const supertest = require('supertest')
 const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
 
 const helper = require('./helper_functions')
 const app = require('../app')
 const api = supertest(app)
-const User = require('../models/user')
 
 describe('ensure invalid users are not created', () => {
 
 	beforeEach(async () => {
-	  await User.deleteMany({})
-
-	  const passwordHash = await bcrypt.hash('newPass123', 10)
-	  const user = new User({ username: 'hellas', name: 'Arto Hellas', passwordHash })
-
-	  await user.save()
+		await helper.createTestUser()
 	})
 
 	test('when creating user without username', async () => {
