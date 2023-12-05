@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
@@ -6,6 +6,7 @@ import BlogForm from './components/BlogForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { initialStateBlogs, likeBlog, remove } from './reducers/blogReducer'
 import { initialStateUser, logout } from './reducers/userReducer'
+import Users from './components/Users'
 
 const App = () => {
 	const dispatch = useDispatch()
@@ -66,6 +67,8 @@ const App = () => {
 						}}
 					/>
 				))}
+
+			<Users />
 		</div>
 	)
 }
