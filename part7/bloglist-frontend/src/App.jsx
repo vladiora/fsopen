@@ -7,7 +7,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { initialStateBlogs, likeBlog, remove } from './reducers/blogReducer'
 import { initialStateUser, logout } from './reducers/userReducer'
 import Users from './components/Users'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useMatch } from 'react-router-dom'
+import User from './components/User'
 
 const App = () => {
 	const dispatch = useDispatch()
@@ -20,6 +21,8 @@ const App = () => {
 		return user
 	})
 
+	const usersList = useSelector(({ users }) => {return users})
+
 	useEffect(() => {
 		dispatch(initialStateBlogs())
 	}, [])
@@ -27,6 +30,10 @@ const App = () => {
 	useEffect(() => {
 		dispatch(initialStateUser())
 	}, [])
+
+	const match = useMatch('/users/:id')
+
+  	const userRoute = match ? usersList.find(u => u.id === match.params.id) : null
 
 	if (!activeUser)
 		return (
@@ -53,6 +60,7 @@ const App = () => {
 			</p>
 
 			<Routes>
+				<Route path="/users/:id" element={<User user={userRoute} />} />
 				<Route path='/' element={
 					<div>
 						<BlogForm />
