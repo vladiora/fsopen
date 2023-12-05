@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { initialStateBlogs, likeBlog, remove } from './reducers/blogReducer'
 import { initialStateUser, logout } from './reducers/userReducer'
 import Users from './components/Users'
+import { Route, Routes } from 'react-router-dom'
 
 const App = () => {
 	const dispatch = useDispatch()
@@ -51,24 +52,29 @@ const App = () => {
 				</button>
 			</p>
 
-			<BlogForm />
+			<Routes>
+				<Route path='/' element={
+					<div>
+						<BlogForm />
 
-			{blogList
-				.toSorted((a, b) => b.likes - a.likes)
-				.map((blog) => (
-					<Blog
-						key={blog.id}
-						blog={blog}
-						addLikes={(updatedBlog) => {
-							dispatch(likeBlog(updatedBlog))
-						}}
-						removeBlog={(id) => {
-							dispatch(remove(id))
-						}}
-					/>
-				))}
-
-			<Users />
+						{blogList
+							.toSorted((a, b) => b.likes - a.likes)
+							.map((blog) => (
+								<Blog
+									key={blog.id}
+									blog={blog}
+									addLikes={(updatedBlog) => {
+										dispatch(likeBlog(updatedBlog))
+									}}
+									removeBlog={(id) => {
+										dispatch(remove(id))
+									}}
+								/>
+							))}
+					</div>
+				} />
+				<Route path='/users' element={<Users />} />
+			</Routes>
 		</div>
 	)
 }
