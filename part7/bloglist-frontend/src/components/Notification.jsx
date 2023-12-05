@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 
 const Notification = () => {
-	const {notif, style} = useSelector(({ notification }) => {
+	const { notif, style } = useSelector(({ notification }) => {
 		return notification
 	})
 

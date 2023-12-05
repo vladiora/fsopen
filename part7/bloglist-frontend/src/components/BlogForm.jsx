@@ -1,70 +1,50 @@
-import PropTypes from 'prop-types'
-import { useState } from 'react'
+import Togglable from './Togglable'
+import { useRef } from 'react'
+import { useDispatch } from 'react-redux'
+import { createNew } from '../reducers/blogReducer'
 
-const BlogForm = ({ createBlog }) => {
-	const [title, setTitle] = useState('')
-	const [author, setAuthor] = useState('')
-	const [url, setUrl] = useState('')
+const BlogForm = () => {
+	const blogFormRef = useRef()
+	const dispatch = useDispatch()
 
 	const addBlog = (event) => {
 		event.preventDefault()
 
 		const newBlog = {
-			title: title,
-			author: author,
-			url: url,
+			title: event.target.title.value,
+			author: event.target.author.value,
+			url: event.target.url.value,
 		}
 
-		createBlog(newBlog)
-		setTitle('')
-		setAuthor('')
-		setUrl('')
+		blogFormRef.current.toggleVisibility()
+
+		dispatch(createNew(newBlog))
 	}
 
 	return (
 		<div>
-			<h2>create new</h2>
-			<form onSubmit={addBlog}>
-				<div>
-					title:
-					<input
-						type="text"
-						id="title"
-						value={title}
-						name="Title"
-						onChange={({ target }) => setTitle(target.value)}
-					/>
-				</div>
-				<div>
-					author:
-					<input
-						type="text"
-						id="author"
-						value={author}
-						name="Author"
-						onChange={({ target }) => setAuthor(target.value)}
-					/>
-				</div>
-				<div>
-					url:
-					<input
-						type="text"
-						id="url"
-						value={url}
-						name="Url"
-						onChange={({ target }) => setUrl(target.value)}
-					/>
-				</div>
-				<button id="create-button" type="submit">
-					create
-				</button>
-			</form>
+			<Togglable buttonLabel="create new blog" ref={blogFormRef}>
+				<h2>create new</h2>
+				<form onSubmit={addBlog}>
+					<div>
+						title:
+						<input type="text" name="title" />
+					</div>
+					<div>
+						author:
+						<input type="text" name="author" />
+					</div>
+					<div>
+						url:
+						<input type="text" name="url" />
+					</div>
+					<button id="create-button" type="submit">
+						create
+					</button>
+				</form>
+			</Togglable>
 		</div>
 	)
-}
-
-BlogForm.propTypes = {
-	createBlog: PropTypes.func.isRequired,
 }
 
 export default BlogForm
