@@ -1,7 +1,13 @@
-import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { Link } from 'react-router-dom'
+import { likeBlog, remove } from '../reducers/blogReducer'
 
-const Blog = ({ blog, addLikes, removeBlog }) => {
-	const [visible, setVisible] = useState(false)
+const Blog = ({ blog, preview}) => {
+
+	if (!blog)
+		return null
+
+	const dispatch = useDispatch()
 
 	const blogStyle = {
 		paddingTop: 10,
@@ -11,9 +17,12 @@ const Blog = ({ blog, addLikes, removeBlog }) => {
 		marginBottom: 5,
 	}
 
-	const toggleVisibility = () => {
-		setVisible(!visible)
-	}
+	if (preview)
+		return (
+			<div className="blog" style={blogStyle}>
+				<Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
+			</div>
+		)
 
 	const addLike = () => {
 		const updatedBlog = {
@@ -21,12 +30,12 @@ const Blog = ({ blog, addLikes, removeBlog }) => {
 			likes: blog.likes + 1,
 			user: blog.user.id,
 		}
-		addLikes(updatedBlog)
+		dispatch(likeBlog(updatedBlog))
 	}
 
-	const remove = () => {
+	const onRemove = () => {
 		if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`))
-			removeBlog(blog.id)
+			dispatch(remove(blog.id))
 	}
 
 	const canRemove =
@@ -35,15 +44,16 @@ const Blog = ({ blog, addLikes, removeBlog }) => {
 
 	const removeBtn = () => (
 		<div>
-			<button className="red-button" onClick={remove}>
+			<button className="red-button" onClick={onRemove}>
 				remove
 			</button>
 		</div>
 	)
 
-	const additionalInfo = () => (
+	return (
 		<div>
-			<p>{blog.url}</p>
+			<h1>{blog.title}</h1>
+			<a href={blog.url}>{blog.url}</a>
 			<p>
 				likes {blog.likes}{' '}
 				<button className="like-button" onClick={addLike}>
@@ -52,16 +62,6 @@ const Blog = ({ blog, addLikes, removeBlog }) => {
 			</p>
 			<p>{blog.user.name}</p>
 			{canRemove && removeBtn()}
-		</div>
-	)
-
-	return (
-		<div className="blog" style={blogStyle}>
-			{blog.title} {blog.author}
-			<button onClick={toggleVisibility}>
-				{visible ? 'hide' : 'show'}
-			</button>
-			{visible && additionalInfo()}
 		</div>
 	)
 }

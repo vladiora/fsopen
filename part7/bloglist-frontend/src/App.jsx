@@ -4,7 +4,7 @@ import Notification from './components/Notification'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import { useDispatch, useSelector } from 'react-redux'
-import { initialStateBlogs, likeBlog, remove } from './reducers/blogReducer'
+import { initialStateBlogs } from './reducers/blogReducer'
 import { initialStateUser, logout } from './reducers/userReducer'
 import Users from './components/Users'
 import { Route, Routes, useMatch } from 'react-router-dom'
@@ -31,9 +31,11 @@ const App = () => {
 		dispatch(initialStateUser())
 	}, [])
 
-	const match = useMatch('/users/:id')
+	const matchUser = useMatch('/users/:id')
+	const matchBlog = useMatch('/blogs/:id')
 
-  	const userRoute = match ? usersList.find(u => u.id === match.params.id) : null
+  	const userRoute = matchUser ? usersList.find(u => u.id === matchUser.params.id) : null
+	const blogRoute = matchBlog ? blogList.find(b => b.id === matchBlog.params.id) : null
 
 	if (!activeUser)
 		return (
@@ -60,6 +62,7 @@ const App = () => {
 			</p>
 
 			<Routes>
+				<Route path='/blogs/:id' element={<Blog blog={blogRoute} />} />
 				<Route path="/users/:id" element={<User user={userRoute} />} />
 				<Route path='/' element={
 					<div>
@@ -71,12 +74,7 @@ const App = () => {
 								<Blog
 									key={blog.id}
 									blog={blog}
-									addLikes={(updatedBlog) => {
-										dispatch(likeBlog(updatedBlog))
-									}}
-									removeBlog={(id) => {
-										dispatch(remove(id))
-									}}
+									preview={true}
 								/>
 							))}
 					</div>
