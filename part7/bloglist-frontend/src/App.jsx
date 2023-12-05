@@ -5,10 +5,11 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import { useDispatch, useSelector } from 'react-redux'
 import { initialStateBlogs } from './reducers/blogReducer'
-import { initialStateUser, logout } from './reducers/userReducer'
+import { initialStateUser } from './reducers/userReducer'
 import Users from './components/Users'
 import { Route, Routes, useMatch } from 'react-router-dom'
 import User from './components/User'
+import Menu from './components/Menu'
 
 const App = () => {
 	const dispatch = useDispatch()
@@ -48,18 +49,9 @@ const App = () => {
 
 	return (
 		<div>
+			<Menu />
 			<h2>blogs</h2>
 			<Notification />
-			<p>
-				{activeUser.name} logged in
-				<button
-					onClick={() => {
-						dispatch(logout())
-					}}
-				>
-					logout
-				</button>
-			</p>
 
 			<Routes>
 				<Route path='/blogs/:id' element={<Blog blog={blogRoute} />} />
