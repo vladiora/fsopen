@@ -49,3 +49,11 @@
 .like-button:hover {
 	background-color: #0056b3; /* Darker blue on hover */
 }
+
+.small-input {
+	max-width: 260px; /* Adjust the max-width as needed */
+}
+
+.medium-input {
+	max-width: 360px; /* Adjust the max-width as needed */
+}

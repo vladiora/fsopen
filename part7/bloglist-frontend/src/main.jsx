@@ -7,7 +7,7 @@ import notificationReducer from './reducers/notificationReducer'
 import blogReducer from './reducers/blogReducer'
 import userReducer from './reducers/userReducer'
 import usersReducer from './reducers/usersReducer'
-import { BrowserRouter as Router } from "react-router-dom"
+import { BrowserRouter as Router } from 'react-router-dom'
 
 const store = configureStore({
 	reducer: {

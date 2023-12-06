@@ -1,28 +1,12 @@
 import { useDispatch } from 'react-redux'
-import { Link } from 'react-router-dom'
 import { addNewComment, likeBlog, remove } from '../reducers/blogReducer'
+import { useNavigate } from 'react-router-dom'
 
-const Blog = ({ blog, preview }) => {
-
-	if (!blog)
-		return null
+const Blog = ({ blog }) => {
+	if (!blog) return null
 
 	const dispatch = useDispatch()
-
-	const blogStyle = {
-		paddingTop: 10,
-		paddingLeft: 2,
-		border: 'solid',
-		borderWidth: 1,
-		marginBottom: 5,
-	}
-
-	if (preview)
-		return (
-			<div className="blog" style={blogStyle}>
-				<Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
-			</div>
-		)
+	const navigate = useNavigate()
 
 	const addLike = () => {
 		const updatedBlog = {
@@ -34,8 +18,10 @@ const Blog = ({ blog, preview }) => {
 	}
 
 	const onRemove = () => {
-		if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`))
+		if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
 			dispatch(remove(blog.id))
+			navigate('/')
+		}
 	}
 
 	const canRemove =
@@ -45,7 +31,7 @@ const Blog = ({ blog, preview }) => {
 	const removeBtn = () => (
 		<div>
 			<button className="red-button" onClick={onRemove}>
-				remove
+				Remove blog
 			</button>
 		</div>
 	)
@@ -56,7 +42,6 @@ const Blog = ({ blog, preview }) => {
 		dispatch(addNewComment(blog.id, event.target.comment.value))
 	}
 
-	console.log(blog)
 	return (
 		<div>
 			<h1>{blog.title}</h1>
@@ -71,18 +56,15 @@ const Blog = ({ blog, preview }) => {
 
 			<h3>comments</h3>
 			<form onSubmit={addComment}>
-				<input type='text' name='comment' />
-				<button type='submit' >add comment</button>
+				<input type="text" name="comment" />
+				<button type="submit">add comment</button>
 			</form>
 
 			<ul>
 				{blog.comments.map((comment, index) => (
-					<li key={index}>
-						{comment}
-					</li>
+					<li key={index}>{comment}</li>
 				))}
 			</ul>
-
 
 			{canRemove && removeBtn()}
 		</div>
