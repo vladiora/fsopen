@@ -114,4 +114,27 @@ export const remove = (id) => {
 	}
 }
 
+export const addNewComment = (id, comment) => {
+	return (dispatch) => {
+		blogService
+			.addComment(id, comment)
+			.then((returnedBlog) => {
+				dispatch(updateBlog(returnedBlog))
+			})
+			.catch((error) => {
+				dispatch(
+					setNotification(
+						{
+							notif: error.response.data.error,
+							style: 'error',
+						},
+						5
+					)
+				)
+
+				dispatch(removeBlog(updateBlog.id))
+			})
+	}
+}
+
 export default blogSlice.reducer

@@ -18,6 +18,23 @@ blogsRouter.get('/:id', async (request, response) => {
 		response.status(404).end()
 })
 
+blogsRouter.post('/:id/comments', async (request, response) => {
+
+	const blog = await Blog.findById(request.params.id).populate('user', { username: 1, name: 1 })
+
+	const comment = request.body.comment
+
+	if (blog) {
+
+		blog.comments = blog.comments.concat(comment)
+		await blog.save()
+
+		response.json(blog)
+	}
+	else
+		response.status(404).end()
+})
+
 blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
 
 	const body = request.body
